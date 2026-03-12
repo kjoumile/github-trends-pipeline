@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres-api
+    env_file:
+      - .env
+    networks: [backend]
+    volumes:
+      - postgres_github_data:/var/lib/postgresql/data:z
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql:z
+    healthcheck:
+      test: ['CMD-SHELL', "pg_isready -u ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+networks:
+  backend:
+    driver: bridge
+    internal: true
+volumes:
+  postgres_github_data:

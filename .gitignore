@@ -1,0 +1,9 @@
+.env
+.venv/
+.idea/
+__pycahce__
+*.pyc
+logs/*
+!logs/.gitkeep
+data/raw/*
+!data/raw/.gitkeep

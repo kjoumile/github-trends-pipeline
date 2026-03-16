@@ -27,9 +27,13 @@ class Github:
             return response.json()
     def save_trending(self, data, lang:str):
         with open(f"../data/raw/response_{lang}_{datetime.now().strftime('%Y-%m-%d')}.json", 'w') as outfile:
+            data['collected_at']=datetime.now().strftime('%Y-%m-%d')
             json.dump(data, outfile, indent=4)
 
 
+github = Github()
+get_trending = github.get_trending('python', 'star', '10')
+github.save_trending(get_trending, 'python')
 
 
 

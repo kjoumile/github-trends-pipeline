@@ -32,7 +32,7 @@ class Github:
 
 
 github = Github()
-get_trending = github.get_trending('python', 'star', '10')
+get_trending = github.get_trending('python', 'star', '100')
 github.save_trending(get_trending, 'python')
 
 

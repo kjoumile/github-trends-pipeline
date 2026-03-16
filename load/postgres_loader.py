@@ -49,7 +49,7 @@ class PostgresLoader:
                         collected_at = EXCLUDED.collected_at;''',
                                    (item['id'], item['name'], item['full_name'], item['language'],
                                     item['stargazers_count'], item['forks_count'], item['open_issues_count'],
-                                    json.dumps(['topics']), item['created_at'], item['updated_at'], data['collected_at']))
+                                    json.dumps(item['topics']), item['created_at'], item['updated_at'], data['collected_at']))
                 self.connection.commit()
                 print('Data loaded')
             except Exception as e:

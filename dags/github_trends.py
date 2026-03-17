@@ -30,7 +30,7 @@ def extract_github_trends(**context):
 
 def load_to_github_trends(**context):
     pg = PostgresLoader()
-    file_name=f"./data/raw/response_JAVA_{datetime.now().strftime('%Y-%m-%d')}.json"
+    file_name=f"/opt/airflow/data/raw/response_JAVA_{datetime.now().strftime('%Y-%m-%d')}.json"
     data = json.loads(open(file_name, 'r').read())
     pg.load(data)
     pg.disconnect()

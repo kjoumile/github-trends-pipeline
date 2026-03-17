@@ -60,7 +60,3 @@ def read_json(file_name):
         data = json.load(json_file)
     return data
 
-postgres_loader = PostgresLoader()
-data = read_json('../data/raw/response_python_2026-03-16.json')
-postgres_loader.load(data)
-postgres_loader.disconnect()

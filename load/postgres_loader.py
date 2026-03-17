@@ -23,7 +23,7 @@ class PostgresLoader:
                     password = self._password,
                     port = self._port,
                     database = self._database,
-                    host = 'localhost'
+                    host = 'postgres'
                 )
                 print('Connected to PostgreSQL')
             except Exception as e:

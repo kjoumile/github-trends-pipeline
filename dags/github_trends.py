@@ -1,6 +1,9 @@
 from airflow import DAG
+from airflow.operators.python import PythonOperator
+
 from extract.github_class import Github
 from load.postgres_loader import PostgresLoader
+from jobs.transform import Spark
 from datetime import datetime, timedelta
 import json
 
@@ -22,10 +25,10 @@ dag = DAG(
 
 def extract_github_trends(**context):
     gh = Github()
-    trending = gh.get_trending(lang='JAVA', sort='star', per_page='30')
+    trending = gh.get_trending(lang='JAVA', sort='stars', per_page='30')
     gh.save_trending(trending, 'JAVA')
 
-def write_to_github_trends(**context):
+def load_to_github_trends(**context):
     pg = PostgresLoader()
     file_name=f"./data/raw/response_JAVA_{datetime.now().strftime('%Y-%m-%d')}.json"
     data = json.loads(open(file_name, 'r').read())
@@ -33,6 +36,29 @@ def write_to_github_trends(**context):
     pg.disconnect()
 
 def transform_github_trends(**context):
+    spark = Spark()
+    spark.spark_run_transform()
+
+
+task_extract = PythonOperator(
+    task_id='extract_github_trends',
+    python_callable=extract_github_trends,
+    dag=dag,
+)
+
+task_load = PythonOperator(
+    task_id='load_github_trends',
+    python_callable=load_to_github_trends,
+    dag=dag,
+)
+
+task_transform= PythonOperator(
+    task_id='transform_github_trends',
+    python_callable=transform_github_trends,
+    dag=dag,
+)
+
+task_extract >> task_load >> task_transform
 
 
 

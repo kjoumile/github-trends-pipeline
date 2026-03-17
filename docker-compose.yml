@@ -17,6 +17,7 @@ x-airflow-common: &common-airflow
     - ./load:/opt/airflow/load:z
     - ./jobs:/opt/airflow/jobs:z
     - ./data:/opt/airflow/data:z
+    - ./drivers:/opt/airflow/drivers:z
 
 services:
   airflow-init:

@@ -16,12 +16,24 @@ jdbc_options = {
     'password': os.getenv('POSTGRES_PASSWORD'),
     'driver': "org.postgresql.Driver",
 }
-df = spark.read.format('jdbc').options(**jdbc_options).option('dbtable','raw.repositories').load()
 
-df.show()
-df.printSchema()
+def read_from_postgres_spark(table='raw.repositories'):
+    df = spark.read.format('jdbc') \
+        .options(**jdbc_options) \
+        .option('dbtable',table).load()
+    return df
 
-df = df.dropDuplicates()
-df = df.filter(col('name').isNotNull() & col('lang').isNotNull())
 
-df.write.format('jdbc').options(**jdbc_options).option('dbtable', 'staging.repositories').mode('overwrite').save()
+def spark_run_transform():
+    df = read_from_postgres_spark(table='staging.repositories')
+    df = df.dropDuplicates()
+    df = df.filter(
+        col('name').isNotNull() & col('lang').isNotNull()
+    )
+    write_to_postgres_spark(df, table='staging.repositories')
+
+def write_to_postgres_spark(df, table='staging.repositories'):
+    df.write.format('jdbc') \
+        .options(**jdbc_options) \
+        .option('dbtable', table) \
+        .mode('overwrite').save()

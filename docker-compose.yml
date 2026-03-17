@@ -7,10 +7,15 @@ x-airflow-common: &common-airflow
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+
+    PYTHONPATH: /opt/airflow
   volumes:
     - ./dags:/opt/airflow/dags:z
     - ./logs:/opt/airflow/logs:z
     - ./plugins:/opt/airflow/plugins:z
+    - ./extract:/opt/airflow/extract:z
+    - ./load:/opt/airflow/load:z
+    - ./jobs:/opt/airflow/jobs:z
 
 services:
   airflow-init:

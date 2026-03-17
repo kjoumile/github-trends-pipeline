@@ -31,7 +31,7 @@ def spark_run_transform():
         col('name').isNotNull() & col('lang').isNotNull()
     )
     write_to_postgres_spark(df, table='staging.repositories')
-
+    spark.stop()
 def write_to_postgres_spark(df, table='staging.repositories'):
     df.write.format('jdbc') \
         .options(**jdbc_options) \

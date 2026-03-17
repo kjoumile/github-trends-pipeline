@@ -31,9 +31,6 @@ class Github:
             json.dump(data, outfile, indent=4)
 
 
-github = Github()
-get_trending = github.get_trending('python', 'star', '100')
-github.save_trending(get_trending, 'python')
 
 
 

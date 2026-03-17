@@ -26,7 +26,7 @@ class Github:
         with self.session.get("https://api.github.com/search/repositories", params=params) as response:
             return response.json()
     def save_trending(self, data, lang:str):
-        with open(f"../data/raw/response_{lang}_{datetime.now().strftime('%Y-%m-%d')}.json", 'w') as outfile:
+        with open(f"/opt/airflow/data/raw/response_{lang}_{datetime.now().strftime('%Y-%m-%d')}.json", 'w') as outfile:
             data['collected_at']=datetime.now().strftime('%Y-%m-%d')
             json.dump(data, outfile, indent=4)
 

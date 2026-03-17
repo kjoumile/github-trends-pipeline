@@ -1,5 +1,5 @@
 x-airflow-common: &common-airflow
-  image: apache/airflow:2.8.0
+  build: .
   networks: [backend, frontend]
   env_file:
     - .env

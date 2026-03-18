@@ -18,6 +18,7 @@ x-airflow-common: &common-airflow
     - ./jobs:/opt/airflow/jobs:z
     - ./data:/opt/airflow/data:z
     - ./drivers:/opt/airflow/drivers:z
+    - ./config.py:/opt/airflow/config.py:z
 
 services:
   grafana:

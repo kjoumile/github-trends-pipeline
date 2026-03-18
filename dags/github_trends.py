@@ -6,6 +6,7 @@ from load.postgres_loader import PostgresLoader
 from jobs.transform import Spark
 from datetime import datetime, timedelta
 import json
+from config import LANGUAGES, SORT_ORDER, PER_PAGE
 
 default_args = {
     'owner': 'airflow',
@@ -25,14 +26,16 @@ dag = DAG(
 
 def extract_github_trends(**context):
     gh = Github()
-    trending = gh.get_trending(lang='GO', sort='stars', per_page='30')
-    gh.save_trending(trending, 'GO')
+    for lang in LANGUAGES:
+        trending = gh.get_trending(lang=lang, sort=SORT_ORDER, per_page=PER_PAGE)
+        gh.save_trending(trending, lang)
 
 def load_to_github_trends(**context):
     pg = PostgresLoader()
-    file_name=f"/opt/airflow/data/raw/response_GO_{datetime.now().strftime('%Y-%m-%d')}.json"
-    data = json.loads(open(file_name, 'r').read())
-    pg.load(data)
+    for lang in LANGUAGES:
+        file_name=f"/opt/airflow/data/raw/response_{lang}_{datetime.now().strftime('%Y-%m-%d')}.json"
+        data = json.loads(open(file_name, 'r').read())
+        pg.load(data)
     pg.disconnect()
 
 def transform_github_trends(**context):

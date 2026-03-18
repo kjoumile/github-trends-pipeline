@@ -3,11 +3,10 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import col
 from dotenv import load_dotenv
 load_dotenv()
-jar_path = os.path.abspath('../drivers/postgresql-42.7.3.jar')
 
 class Spark:
     def __init__(self):
-        self.jar_path = os.path.abspath('../drivers/postgresql-42.7.3.jar')
+        self.jar_path = os.path.abspath('/opt/airflow/drivers/postgresql-42.7.3.jar')
         self.__url = f"jdbc:postgresql://postgres:{os.getenv('POSTGRES_PORT')}/{os.getenv('POSTGRES_DB')}"
         self.__user = os.getenv('POSTGRES_USER')
         self.__password = os.getenv('POSTGRES_PASSWORD')

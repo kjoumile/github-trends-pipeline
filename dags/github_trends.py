@@ -25,12 +25,12 @@ dag = DAG(
 
 def extract_github_trends(**context):
     gh = Github()
-    trending = gh.get_trending(lang='JAVA', sort='stars', per_page='30')
-    gh.save_trending(trending, 'JAVA')
+    trending = gh.get_trending(lang='GO', sort='stars', per_page='30')
+    gh.save_trending(trending, 'GO')
 
 def load_to_github_trends(**context):
     pg = PostgresLoader()
-    file_name=f"/opt/airflow/data/raw/response_JAVA_{datetime.now().strftime('%Y-%m-%d')}.json"
+    file_name=f"/opt/airflow/data/raw/response_GO_{datetime.now().strftime('%Y-%m-%d')}.json"
     data = json.loads(open(file_name, 'r').read())
     pg.load(data)
     pg.disconnect()
@@ -39,6 +39,18 @@ def transform_github_trends(**context):
     spark = Spark()
     spark.spark_run_transform()
 
+def load_analytics_table(**context):
+    pg = PostgresLoader()
+    pg.execute(
+        """INSERT INTO analytics.top_repos (repo_id, created_at, forks_count, stargazers_count, lang)
+        SELECT id, created_at, forks_count, stargazers_count, lang
+        FROM staging.repositories
+        ORDER BY stargazers_count DESC
+        ON CONFLICT (repo_id) DO UPDATE SET
+            stargazers_count = EXCLUDED.stargazers_count,
+            forks_count = EXCLUDED.forks_count,
+            created_at = EXCLUDED.created_at"""
+    )
 
 task_extract = PythonOperator(
     task_id='extract_github_trends',
@@ -57,8 +69,12 @@ task_transform= PythonOperator(
     python_callable=transform_github_trends,
     dag=dag,
 )
-
-task_extract >> task_load >> task_transform
+task_load_for_analytics = PythonOperator(
+    task_id='load_analytics_table',
+    python_callable=load_analytics_table,
+    dag=dag,
+)
+task_extract >> task_load >> task_transform >> task_load_for_analytics
 
 
 

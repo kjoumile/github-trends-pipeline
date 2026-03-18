@@ -20,6 +20,14 @@ x-airflow-common: &common-airflow
     - ./drivers:/opt/airflow/drivers:z
 
 services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    networks: [backend, frontend]
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
   airflow-init:
     <<: *common-airflow
     container_name: airflow-init
@@ -92,3 +100,4 @@ networks:
     driver: bridge
 volumes:
   postgres_github_data:
+  grafana_data:

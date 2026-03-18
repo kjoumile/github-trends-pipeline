@@ -54,6 +54,14 @@ class PostgresLoader:
                 print('Data loaded')
             except Exception as e:
                 print(e)
+    def execute(self, query):
+        with self.connection.cursor() as cursor:
+            try:
+                cursor.execute(query)
+                self.connection.commit()
+                print('Data executed')
+            except Exception as e:
+                print(e)
 
 def read_json(file_name):
     with open(file_name) as json_file:
